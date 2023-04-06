@@ -46,3 +46,17 @@ app.post("/sign-up", (req, res) => {
     usuarios.push(novoUsuario);
     res.send("OK");
 })
+
+app.post("/tweets", (req, res) => {
+    const { username, tweet } = req.body;
+    if (!username) {
+        res.sendStatus(401);
+        return
+    }
+    const novoTweet = {
+        username,
+        tweet
+    }
+    tweets.push(novoTweet);
+    res.send("OK");
+})
