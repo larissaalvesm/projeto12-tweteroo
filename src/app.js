@@ -7,33 +7,39 @@ app.use(cors())
 app.use(json())
 app.listen(PORT);
 
-const tweets = [
-    {
-        username: "bobesponja",
-        tweet: "Eu amo hambúrguer de siri!"
-    }
-];
-
-const tweetsRetornados = [];
-
-const usuarios = [
-    {
-        username: 'bobesponja',
-        avatar: "https://cdn.shopify.com/s/files/1/0150/0643/3380/files/Screen_Shot_2019-07-01_at_11.35.42_AM_370x230@2x.png"
-    }
-];
+const tweets = [];
+let tweetsRetornados = [];
+const usuarios = [];
 
 app.get("/tweets", (req, res) => {
-
     if (tweets.length === 0) {
         res.send([]);
     } else if (tweets.length <= 10) {
-        res.send(tweets);
-    } else {
-        for (let i = tweets.length - 1; tweetsRetornados.length <= 10; i--) {
-            tweetsRetornados.push(tweets[i]);
+        for (let i = 0; i < tweets.length; i++) {
+            const user = tweets[i].username;
+            const avatar = usuarios.find(u => u.username === user).avatar;
+            const tweeterRetornado = {
+                username: user,
+                avatar,
+                tweet: tweets[i].tweet
+            }
+            tweetsRetornados.push(tweeterRetornado)
         }
-        res.send(tweetsRetornados);
+        res.send(tweetsRetornados.reverse());
+        tweetsRetornados = [];
+    } else {
+        for (let i = tweets.length - 10; i < tweets.length; i++) {
+            const user = tweets[i].username;
+            const avatar = usuarios.find(u => u.username === user).avatar;
+            const tweeterRetornado = {
+                username: tweets[i].username,
+                avatar,
+                tweet: tweets[i].tweet
+            }
+            tweetsRetornados.push(tweeterRetornado)
+        }
+        res.send(tweetsRetornados.reverse());
+        tweetsRetornados = [];
     }
 })
 
@@ -49,7 +55,7 @@ app.post("/sign-up", (req, res) => {
 
 app.post("/tweets", (req, res) => {
     const { username, tweet } = req.body;
-    if (!username) {
+    if (!usuarios.includes(username)) {
         res.status(401).send("UNAUTHORIZED");
         return
     }
