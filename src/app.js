@@ -55,8 +55,8 @@ app.post("/sign-up", (req, res) => {
 
 app.post("/tweets", (req, res) => {
     const { username, tweet } = req.body;
-    if (!username) {
-        res.send("UNAUTHORIZED");
+    if (usuarios.find((u) => u.username === username) === undefined || !username) {
+        res.status(401).send("UNAUTHORIZED");
         return
     }
     const novoTweet = {
